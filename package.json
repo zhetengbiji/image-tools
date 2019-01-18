@@ -1,0 +1,20 @@
+{
+  "name": "image-tools",
+  "version": "1.0.0",
+  "description": "image-tools",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhetengbiji/image-tools.git"
+  },
+  "keywords": [],
+  "author": "Shengqiang Guo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zhetengbiji/image-tools/issues"
+  },
+  "homepage": "https://github.com/zhetengbiji/image-tools#readme"
+}
