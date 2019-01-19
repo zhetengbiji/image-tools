@@ -1,13 +1,25 @@
 # image-tools
 图像转换工具，可用于如下环境：uni-app、微信小程序、5+APP、浏览器
 
-## 安装方式
+## 使用方式
+
+### NPM
 
 ```
 npm i image-tools --save
 ```
 
-## 使用方式
+```js
+import { pathToBase64 } from 'image-tools'
+```
+
+### 直接下载
+
+```js
+import { pathToBase64 } from '../../js/image-tools/index.js' // 此处路径需根据自己项目实际填写
+```
+
+## API
 
 ### pathToBase64
 
@@ -19,6 +31,6 @@ pathToBase64(path)
     console.log(base64)
   })
   .catch(error => {
-	console.error(error)
+    console.error(error)
   })
 ```
