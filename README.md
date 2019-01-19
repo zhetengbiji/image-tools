@@ -49,3 +49,28 @@ base64ToPath(base64)
     console.error(error)
   })
 ```
+
+## 提示
+
+可以利用promise来串行和并行的执行多个任务
+
+```js
+// 并行
+Promise.all(paths.map(path => pathToBase64(path)))
+  .then(res => {
+    console.log(res)
+    // [base64, base64...]
+  })
+  .catch(error => {
+    console.error(error)
+  })
+// 串行
+paths.reduce((promise, path) => promise.then(res => pathToBase64(path).then(base64 => (res.push(base64), res))), Promise.resolve([]))
+  .then(res => {
+    console.log(res)
+    // [base64, base64...]
+  })
+  .catch(error => {
+    console.error(error)
+  })
+```

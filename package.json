@@ -1,7 +1,7 @@
 {
   "name": "image-tools",
-  "version": "1.1.0",
-  "description": "image-tools",
+  "version": "1.1.1",
+  "description": "图像转换工具，可用于如下环境：uni-app、微信小程序、5+APP、浏览器",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/zhetengbiji/image-tools.git"
   },
-  "keywords": [],
+  "keywords": ["base64"],
   "author": "Shengqiang Guo",
   "license": "ISC",
   "bugs": {
