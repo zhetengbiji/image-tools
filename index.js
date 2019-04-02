@@ -60,7 +60,7 @@ export function base64ToPath(base64) {
             }
             return resolve((window.URL || window.webkitURL).createObjectURL(new Blob([array], { type: type })))
         }
-        var extName = base64.match(/data\:image\/(.+);/)
+        var extName = base64.match(/data\:\S+\/(\S+);/)
         if (extName) {
             extName = extName[1]
         } else {
@@ -88,7 +88,7 @@ export function base64ToPath(base64) {
             var filePath = wx.env.USER_DATA_PATH + '/' + fileName
             wx.getFileSystemManager().writeFile({
                 filePath: filePath,
-                data: base64,
+                data: base64.replace(/^data:\S+\/\S+;base64,/, ''),
                 encoding: 'base64',
                 success: function() {
                     resolve(filePath)

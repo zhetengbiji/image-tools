@@ -7,6 +7,7 @@
 			<button @click="toPath" type="primary">转为路径</button>
 			<view>path:</view>
 			<view>{{path}}</view>
+			<image v-if="path" :src="path" style="width: 300px;height: 300px;"></image>
 		</view>
 	</view>
 </template>
