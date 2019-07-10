@@ -1,3 +1,24 @@
+function getLocalFilePath(path) {
+    if (path.indexOf('_www') === 0 || path.indexOf('_doc') === 0 || path.indexOf('_documents') === 0 || path.indexOf('_downloads') === 0) {
+        return path
+    }
+    if (path.indexOf('file://') === 0) {
+        return path
+    }
+    if (path.indexOf('/storage/emulated/0/') === 0) {
+        return path
+    }
+    if (path.indexOf('/') === 0) {
+        var localFilePath = plus.io.convertAbsoluteFileSystem(path)
+        if (localFilePath !== path) {
+            return localFilePath
+        } else {
+            path = path.substr(1)
+        }
+    }
+    return '_www/' + path
+}
+
 export function pathToBase64(path) {
     return new Promise(function(resolve, reject) {
         if (typeof window === 'object' && 'document' in window) {
@@ -15,17 +36,20 @@ export function pathToBase64(path) {
             return
         }
         if (typeof plus === 'object') {
-            var bitmap = new plus.nativeObj.Bitmap('bitmap' + Date.now())
-            bitmap.load(path, function() {
-                try {
-                    var base64 = bitmap.toBase64Data()
-                } catch (error) {
+            plus.io.resolveLocalFileSystemURL(getLocalFilePath(path), function(entry) {
+                entry.file(function(file) {
+                    var fileReader = new plus.io.FileReader()
+                    fileReader.onload = function(data) {
+                        resolve(data.target.result)
+                    }
+                    fileReader.onerror = function(error) {
+                        reject(error)
+                    }
+                    fileReader.readAsDataURL(file)
+                }, function(error) {
                     reject(error)
-                }
-                bitmap.clear()
-                resolve(base64)
+                })
             }, function(error) {
-                bitmap.clear()
                 reject(error)
             })
             return
