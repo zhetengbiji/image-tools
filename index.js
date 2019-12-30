@@ -22,6 +22,24 @@ function getLocalFilePath(path) {
 export function pathToBase64(path) {
     return new Promise(function(resolve, reject) {
         if (typeof window === 'object' && 'document' in window) {
+            if (typeof FileReader === 'function') {
+                var xhr = new XMLHttpRequest()
+                xhr.open('GET', path, true)
+                xhr.responseType = 'blob'
+                xhr.onload = function() {
+                    if (this.status === 200) {
+                        let fileReader = new FileReader()
+                        fileReader.onload = function(e) {
+                            resolve(e.target.result)
+                        }
+                        fileReader.onerror = reject
+                        fileReader.readAsDataURL(this.response)
+                    }
+                }
+                xhr.onerror = reject
+                xhr.send()
+                return
+            }
             var canvas = document.createElement('canvas')
             var c2x = canvas.getContext('2d')
             var img = new Image
@@ -30,6 +48,7 @@ export function pathToBase64(path) {
                 canvas.height = img.height
                 c2x.drawImage(img, 0, 0)
                 resolve(canvas.toDataURL())
+                canvas.height = canvas.width = 0
             }
             img.onerror = reject
             img.src = path
