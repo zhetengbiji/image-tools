@@ -19,6 +19,25 @@ function getLocalFilePath(path) {
     return '_www/' + path
 }
 
+var index = 0
+function getNewFileId() {
+    return Date.now() + String(index++)
+}
+
+function biggerThan(v1, v2) {
+    var v1Array = v1.split('.')
+    var v2Array = v2.split('.')
+    var update = false
+    for (var index = 0; index < v2Array.length; index++) {
+        var diff = v1Array[index] - v2Array[index]
+        if (diff !== 0) {
+            update = diff > 0
+            break
+        }
+    }
+    return update
+}
+
 export function pathToBase64(path) {
     return new Promise(function(resolve, reject) {
         if (typeof window === 'object' && 'document' in window) {
@@ -109,11 +128,36 @@ export function base64ToPath(base64) {
         } else {
             reject(new Error('base64 error'))
         }
-        var fileName = Date.now() + '.' + extName
+        var fileName = getNewFileId() + '.' + extName
         if (typeof plus === 'object') {
-            var bitmap = new plus.nativeObj.Bitmap('bitmap' + Date.now())
+            var basePath = '_doc'
+            var dirPath = 'uniapp_temp'
+            var filePath = basePath + '/' + dirPath + '/' + fileName
+            if (!biggerThan(plus.os.name === 'Android' ? '1.9.9.80627' : '1.9.9.80472', plus.runtime.innerVersion)) {
+                plus.io.resolveLocalFileSystemURL(basePath, function(entry) {
+                    entry.getDirectory(dirPath, {
+                        create: true,
+                        exclusive: false,
+                    }, function(entry) {
+                        entry.getFile(fileName, {
+                            create: true,
+                            exclusive: false,
+                        }, function(entry) {
+                            entry.createWriter(function(writer) {
+                                writer.onwrite = function() {
+                                    resolve(filePath)
+                                }
+                                writer.onerror = reject
+                                writer.seek(0)
+                                writer.writeAsBinary(base64.replace(/^data:\S+\/\S+;base64,/, ''))
+                            }, reject)
+                        }, reject)
+                    }, reject)
+                }, reject)
+                return
+            }
+            var bitmap = new plus.nativeObj.Bitmap(fileName)
             bitmap.loadBase64Data(base64, function() {
-                var filePath = '_doc/uniapp_temp/' + fileName
                 bitmap.save(filePath, {}, function() {
                     bitmap.clear()
                     resolve(filePath)
