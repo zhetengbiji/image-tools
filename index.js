@@ -19,6 +19,11 @@ function getLocalFilePath(path) {
     return '_www/' + path
 }
 
+function dataUrlToBase64(str) {
+    var array = str.split(',')
+    return array[array.length - 1]
+}
+
 var index = 0
 function getNewFileId() {
     return Date.now() + String(index++)
@@ -122,7 +127,7 @@ export function base64ToPath(base64) {
             }
             return resolve((window.URL || window.webkitURL).createObjectURL(new Blob([array], { type: type })))
         }
-        var extName = base64.match(/data\:\S+\/(\S+);/)
+        var extName = base64.split(',')[0].match(/data\:\S+\/(\S+);/)
         if (extName) {
             extName = extName[1]
         } else {
@@ -149,7 +154,7 @@ export function base64ToPath(base64) {
                                 }
                                 writer.onerror = reject
                                 writer.seek(0)
-                                writer.writeAsBinary(base64.replace(/^data:\S+\/\S+;base64,/, ''))
+                                writer.writeAsBinary(dataUrlToBase64(base64))
                             }, reject)
                         }, reject)
                     }, reject)
@@ -175,7 +180,7 @@ export function base64ToPath(base64) {
             var filePath = wx.env.USER_DATA_PATH + '/' + fileName
             wx.getFileSystemManager().writeFile({
                 filePath: filePath,
-                data: base64.replace(/^data:\S+\/\S+;base64,/, ''),
+                data: dataUrlToBase64(base64),
                 encoding: 'base64',
                 success: function() {
                     resolve(filePath)

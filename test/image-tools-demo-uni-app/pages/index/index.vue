@@ -33,9 +33,11 @@
 			chooseImage() {
 				uni.chooseImage({
 					success: res => {
+						const time = Date.now()
 						pathToBase64(res.tempFilePaths[0])
 							.then(base64 => {
-								console.log(base64)
+								console.log(Date.now() - time)
+								console.log(base64.substring(0, 50) + '...')
 								this.base64 = base64
 							})
 							.catch(error => {
@@ -45,8 +47,10 @@
 				})
 			},
 			toPath() {
+				const time = Date.now()
 				base64ToPath(this.base64)
 					.then(path => {
+						console.log(Date.now() - time)
 						console.log(path)
 						this.path = path
 					})

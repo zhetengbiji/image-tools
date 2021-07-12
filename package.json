@@ -1,6 +1,6 @@
 {
   "name": "image-tools",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "图像转换工具，可用于如下环境：uni-app、微信小程序、5+APP、浏览器",
   "main": "index.js",
   "scripts": {
