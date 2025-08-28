@@ -78,6 +78,19 @@ export function pathToBase64(path) {
             img.src = path
             return
         }
+        if (typeof uni === 'object' && uni.getFileSystemManager) {
+            uni.getFileSystemManager().readFile({
+                filePath: path,
+                encoding: 'base64',
+                success: function(res) {
+                    resolve('data:image/png;base64,' + res.data)
+                },
+                fail: function(error) {
+                    reject(error)
+                }
+            })
+            return
+        }
         if (typeof plus === 'object') {
             plus.io.resolveLocalFileSystemURL(getLocalFilePath(path), function(entry) {
                 entry.file(function(file) {
@@ -134,6 +147,45 @@ export function base64ToPath(base64) {
             reject(new Error('base64 error'))
         }
         var fileName = getNewFileId() + '.' + extName
+        if (typeof uni === 'object' && uni.getFileSystemManager) {
+            var TEMP_PATH = '/data/storage/el2/base/files/downloads'
+            var filePath = TEMP_PATH + '/' + fileName
+            var manager = uni.getFileSystemManager()
+
+            function writeFileAsync() {
+                manager.writeFile({
+                    filePath: filePath,
+                    data: dataUrlToBase64(base64),
+                    encoding: 'base64',
+                    success: function() {
+                        resolve(filePath)
+                    },
+                    fail: function(error) {
+                        reject(error)
+                    }
+                })
+            }
+
+            manager.access({
+                path: TEMP_PATH,
+                success: function() {
+                    writeFileAsync()
+                },
+                fail: function() {
+                    manager.mkdir({
+                        dirPath: TEMP_PATH,
+                        recursive: true,
+                        success: function() {
+                            writeFileAsync()
+                        },
+                        fail: function(error) {
+                            reject(error)
+                        }
+                    })
+                }
+            })
+            return
+        }
         if (typeof plus === 'object') {
             var basePath = '_doc'
             var dirPath = 'uniapp_temp'
