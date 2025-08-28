@@ -1,17 +1,22 @@
-<script>
-	export default {
-		onLaunch: function () {
-			console.log('App Launch')
-		},
-		onShow: function () {
-			console.log('App Show')
-		},
-		onHide: function () {
-			console.log('App Hide')
-		}
-	}
-</script>
+import App from './App'
 
-<style>
-	/*每个页面公共css */
-</style>
+// #ifndef VUE3
+import Vue from 'vue'
+import './uni.promisify.adaptor'
+Vue.config.productionTip = false
+App.mpType = 'app'
+const app = new Vue({
+  ...App
+})
+app.$mount()
+// #endif
+
+// #ifdef VUE3
+import { createSSRApp } from 'vue'
+export function createApp() {
+  const app = createSSRApp(App)
+  return {
+    app
+  }
+}
+// #endif

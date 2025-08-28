@@ -44,5 +44,6 @@
         "setting": {
             "urlCheck": true
         }
-    }
+    },
+    "vueVersion" : "3"
 }
